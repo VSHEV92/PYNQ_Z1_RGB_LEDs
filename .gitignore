@@ -1,1 +1,12 @@
-__pycache__
+*
+!.gitignore
+
+!UART
+!UART/python_source
+!UART/python_source/*.py
+!UART/tcl_xdc_source
+!UART/tcl_xdc_source/*.tcl
+!UART/tcl_xdc_source/*.xdc
+!UART/arm_code
+!UART/arm_code/*.c
+
