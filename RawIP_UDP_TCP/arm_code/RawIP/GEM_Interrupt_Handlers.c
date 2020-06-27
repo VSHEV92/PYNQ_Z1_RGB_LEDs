@@ -46,6 +46,7 @@ extern XEmacPs_Bd *BdTxPtr;
 extern XEmacPs_Bd *BdRxPtr;
 extern u32 TxBdLen;
 extern u8* RX_Frame;
+extern u8 Update_Flag;
 
 void XEmacPsSendHandler(void *Callback){
 	XEmacPs_BdRingFromHwTx(&(XEmacPs_GetTxRing(&EmacInst)), TxBdLen, &BdTxPtr);
@@ -61,11 +62,9 @@ void XEmacPsRecvHandler(void *Callback){
 	XEmacPs_BdRingFree(&(XEmacPs_GetRxRing(&EmacInst)), 1, BdRxPtr);
 
 	Frame_Length = XEmacPs_BdGetLength(BdRxPtr) - XEMACPS_HDR_SIZE;
-	if (Frame_Length == 64){
-	    xil_printf("Frame Length = %u\n", Frame_Length);
-	    for(int i=0; i<Frame_Length; i++)
-	    	xil_printf("RX_Data[%u] = %u\n", i, RX_Frame[XEMACPS_HDR_SIZE+i]);
-	}
+	if (Frame_Length == 101){
+		Update_Flag = 1;
+}
 
 	// выделяем новый буфер
 	XEmacPs_BdRingAlloc(&(XEmacPs_GetRxRing(&EmacInst)), 1, &BdRxPtr);
