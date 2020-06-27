@@ -41,20 +41,37 @@ void XEmacPsErrorHandler(void *Callback, u8 Direction, u32 ErrorWord){
 }
 
 // обработчик прерываний, вызванных при передачи данных
-extern u8 FramesTx;
 extern XEmacPs EmacInst;
 extern XEmacPs_Bd *BdTxPtr;
+extern XEmacPs_Bd *BdRxPtr;
+extern u32 TxBdLen;
+extern u8* RX_Frame;
 
 void XEmacPsSendHandler(void *Callback){
-	xil_printf("Hello Send IRQ\n");
-	FramesTx = 1;
-	XEmacPs_BdRingFromHwTx(&(XEmacPs_GetTxRing(&EmacInst)), 1, &BdTxPtr);
-	XEmacPs_BdRingFree(&(XEmacPs_GetTxRing(&EmacInst)), 1, BdTxPtr);
-	XEmacPs_Stop(&EmacInst);
+	XEmacPs_BdRingFromHwTx(&(XEmacPs_GetTxRing(&EmacInst)), TxBdLen, &BdTxPtr);
+	XEmacPs_BdRingFree(&(XEmacPs_GetTxRing(&EmacInst)), TxBdLen, BdTxPtr);
 }
 
 // обработчик прерываний, вызванных при приеме данных
 void XEmacPsRecvHandler(void *Callback){
-	xil_printf("Hello Receive IRQ\n");
+	u32 Frame_Length;
+
+	// освобождаем буфер пакета
+	XEmacPs_BdRingFromHwRx(&(XEmacPs_GetRxRing(&EmacInst)), 1, &BdRxPtr);
+	XEmacPs_BdRingFree(&(XEmacPs_GetRxRing(&EmacInst)), 1, BdRxPtr);
+
+	Frame_Length = XEmacPs_BdGetLength(BdRxPtr) - XEMACPS_HDR_SIZE;
+	if (Frame_Length == 64){
+	    xil_printf("Frame Length = %u\n", Frame_Length);
+	    for(int i=0; i<Frame_Length; i++)
+	    	xil_printf("RX_Data[%u] = %u\n", i, RX_Frame[XEMACPS_HDR_SIZE+i]);
+	}
+
+	// выделяем новый буфер
+	XEmacPs_BdRingAlloc(&(XEmacPs_GetRxRing(&EmacInst)), 1, &BdRxPtr);
+	XEmacPs_BdSetAddressRx(BdRxPtr, (UINTPTR) RX_Frame);
+	XEmacPs_BdClearRxNew(BdRxPtr);
+	XEmacPs_BdRingToHw(&(XEmacPs_GetRxRing(&EmacInst)), 1, BdRxPtr);
+    Xil_DCacheFlushRange((UINTPTR)BdRxPtr, 2);
 }
 

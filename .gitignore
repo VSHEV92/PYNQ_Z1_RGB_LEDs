@@ -17,7 +17,8 @@
 !RawIP_UDP_TCP/tcl_xdc_source/*.tcl
 !RawIP_UDP_TCP/tcl_xdc_source/*.xdc
 !RawIP_UDP_TCP/arm_code
-!RawIP_UDP_TCP/arm_code/*.c
-!RawIP_UDP_TCP/arm_code/*.h
+!RawIP_UDP_TCP/arm_code/RawIP
+!RawIP_UDP_TCP/arm_code/RawIP/*.c
+!RawIP_UDP_TCP/arm_code/RawIP/*.h
 
 
