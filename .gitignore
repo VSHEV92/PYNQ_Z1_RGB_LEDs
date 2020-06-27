@@ -10,3 +10,14 @@
 !UART/arm_code
 !UART/arm_code/*.c
 
+!RawIP_UDP_TCP
+!RawIP_UDP_TCP/python_source
+!RawIP_UDP_TCP/python_source/*.py
+!RawIP_UDP_TCP/tcl_xdc_source
+!RawIP_UDP_TCP/tcl_xdc_source/*.tcl
+!RawIP_UDP_TCP/tcl_xdc_source/*.xdc
+!RawIP_UDP_TCP/arm_code
+!RawIP_UDP_TCP/arm_code/*.c
+!RawIP_UDP_TCP/arm_code/*.h
+
+
