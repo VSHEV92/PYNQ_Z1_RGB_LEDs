@@ -11,14 +11,26 @@
 !UART/arm_code/*.c
 
 !RawIP_UDP_TCP
-!RawIP_UDP_TCP/python_source
-!RawIP_UDP_TCP/python_source/*.py
 !RawIP_UDP_TCP/tcl_xdc_source
 !RawIP_UDP_TCP/tcl_xdc_source/*.tcl
 !RawIP_UDP_TCP/tcl_xdc_source/*.xdc
+
+!RawIP_UDP_TCP/python_source
+!RawIP_UDP_TCP/python_source/RawIP
+!RawIP_UDP_TCP/python_source/RawIP/*.py
+!RawIP_UDP_TCP/python_source/TCP
+!RawIP_UDP_TCP/python_source/TCP/*.py
+!RawIP_UDP_TCP/python_source/UDP
+!RawIP_UDP_TCP/python_source/UDP/*.py
+
 !RawIP_UDP_TCP/arm_code
 !RawIP_UDP_TCP/arm_code/RawIP
 !RawIP_UDP_TCP/arm_code/RawIP/*.c
 !RawIP_UDP_TCP/arm_code/RawIP/*.h
-
+!RawIP_UDP_TCP/arm_code/TCP
+!RawIP_UDP_TCP/arm_code/TCP/*.c
+!RawIP_UDP_TCP/arm_code/TCP/*.h
+!RawIP_UDP_TCP/arm_code/UDP
+!RawIP_UDP_TCP/arm_code/UDP/*.c
+!RawIP_UDP_TCP/arm_code/UDP/*.h
 
