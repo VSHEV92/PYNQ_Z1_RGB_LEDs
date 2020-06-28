@@ -1,10 +1,9 @@
 #include "lwip/netif.h"
 #include "lwip/init.h"
-#include "lwip/tcp.h"
+#include "lwip/udp.h"
 
 #include "netif/xadapter.h"
 
-#include "xscutimer.h"
 #include "xscugic.h"
 #include "xgpiops.h"
 #include "xparameters.h"
@@ -13,11 +12,8 @@
 
 #include "platform.h"
 
-volatile int TcpFastTmrFlag = 0;
-volatile int TcpSlowTmrFlag = 0;
 
 struct netif device_netif;
-XScuTimer TimerInstance;
 XScuGic InterruptController;
 XGpioPs RGB_LEDs_Gpio;
 
@@ -29,6 +25,20 @@ u8 Update_Flag = 0;
 // Led_Brightness[3] - LED5 Red, Led_Brightness[4] - LED5 Green, Led_Brightness[5] - LED5 Blue
 u8 Led_Brightness[6] = {0,0,0,0,0,0};
 u8 *RX_Frame = (u8 *)0x00FA0000;
+
+// callback функция при приеме пакета
+void recv_callback(void *arg, struct udp_pcb *tpcb, struct pbuf *p, struct ip_addr *addr, u16_t port)
+{
+	u8* Data;
+	Data = (u8 *)(p->payload);
+
+    for(int i=0; i<4; i++)
+    	RX_Frame[i] = Data[i];
+
+    Update_Flag = 1;
+	// освобождаем буфер пакета
+	pbuf_free(p);
+}
 
 int main(){
 	// ------------------------------------------------------------------------------------------------------
@@ -42,29 +52,17 @@ int main(){
 	XGpioPs_SetOutputEnable(&RGB_LEDs_Gpio, Gpio_Bank, 0xFFFFFFFF);
 	// ------------------------------------------------------------------------------------------------------
 
-    // настраиваем таймер для TCP соединения
-	init_timer(&TimerInstance);
-
 	// инициализация контроллера прерываний и включаем прерывания
 	init_intr(&InterruptController);
-	XScuGic_Connect(&InterruptController, XPAR_SCUTIMER_INTR, (Xil_ExceptionHandler) timer_callback, (void *) &TimerInstance);
-	XScuGic_Enable(&InterruptController, XPAR_SCUTIMER_INTR);
 
 	// инициализируем сетевой интерфейс
 	init_netif(&device_netif);
 
-	// включаем прерывания от таймера
-	XScuTimer_EnableInterrupt(&TimerInstance);
-	XScuTimer_Start(&TimerInstance);
-
 	// настраиваем TCP соединение
-	struct tcp_pcb *pcb;
-	u32 TCP_CONN_PORT = 5001;
-	pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
-	tcp_bind(pcb, IP_ADDR_ANY, TCP_CONN_PORT);
-	pcb = tcp_listen(pcb);
-	tcp_arg(pcb, NULL);
-	tcp_accept(pcb, accept_callback);
+	struct udp_pcb *pcb;
+	pcb = udp_new();
+	udp_bind(pcb, IP_ADDR_ANY, 5001);
+	udp_recv(pcb, recv_callback, NULL);
 
 	u8 Data_to_Led_Gpio;
 	while (1) {
@@ -95,19 +93,12 @@ int main(){
 		    XGpioPs_Write(&RGB_LEDs_Gpio, Gpio_Bank, Data_to_Led_Gpio);
 		}
 
-		if (TcpFastTmrFlag) {
-			tcp_fasttmr();
-			TcpFastTmrFlag = 0;
-		}
-		if (TcpSlowTmrFlag) {
-			tcp_slowtmr();
-			TcpSlowTmrFlag = 0;
-		}
 		xemacif_input(&device_netif);
-		}
+	}
 
 	return 0;
 }
+
 
 
 

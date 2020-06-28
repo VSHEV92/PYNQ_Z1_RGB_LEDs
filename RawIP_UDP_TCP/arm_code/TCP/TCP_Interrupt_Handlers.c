@@ -3,6 +3,8 @@
 
 extern volatile int TcpFastTmrFlag;
 extern volatile int TcpSlowTmrFlag;
+extern volatile u8 Update_Flag;
+extern u8* RX_Frame;
 
 // обработчик прерываний от таймера
 void timer_callback(XScuTimer * TimerInstance)
@@ -11,6 +13,7 @@ void timer_callback(XScuTimer * TimerInstance)
 	TcpSlowTmrFlag = 1;
 	XScuTimer_ClearInterruptStatus(TimerInstance);
 }
+
 
 // callback функция при приеме пакета
 err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
@@ -25,15 +28,13 @@ err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 	// указывваем packet control buffer сколько получили данных
 	tcp_recved(tpcb, p->len);
 
-	char* Data;
-    int Data_Len;
+	u8* Data;
+	Data = (u8 *)(p->payload);
 
-	Data = (char *)(p->payload);
-	Data_Len = p->len;
-    for(int i=0; i<Data_Len; i++)
-    	xil_printf("%c", Data[i]);
-    xil_printf("\n");
+    for(int i=0; i<4; i++)
+    	RX_Frame[i] = Data[i];
 
+    Update_Flag = 1;
 	// освобождаем буфер пакета
 	pbuf_free(p);
 

@@ -80,7 +80,7 @@ class UART_Port:
         self.Serial_Port = serial.Serial()
 
     def send_data(self, led_data):
-        # метод отправки данные по последовательному порту
+        # метод отправки данных по последовательному порту
         if led_data.rb_var.get() == 0:
             self.Serial_Port.write(bytes([255]))
             self.Serial_Port.write(bytes([led_data.red_val_1]))

@@ -18,10 +18,8 @@
 !RawIP_UDP_TCP/python_source
 !RawIP_UDP_TCP/python_source/RawIP
 !RawIP_UDP_TCP/python_source/RawIP/*.py
-!RawIP_UDP_TCP/python_source/TCP
-!RawIP_UDP_TCP/python_source/TCP/*.py
-!RawIP_UDP_TCP/python_source/UDP
-!RawIP_UDP_TCP/python_source/UDP/*.py
+!RawIP_UDP_TCP/python_source/TCP_UDP
+!RawIP_UDP_TCP/python_source/TCP_UDP/*.py
 
 !RawIP_UDP_TCP/arm_code
 !RawIP_UDP_TCP/arm_code/RawIP

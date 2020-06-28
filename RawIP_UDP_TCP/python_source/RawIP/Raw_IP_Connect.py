@@ -43,7 +43,7 @@ class RawIP_Connect:
         self.Dist_Mac_Addr_Entry.grid(pady = 4, padx = 5, row = 3, column = 0, columnspan = 2)
 
 
-        # создаем Buttons для начала и окончания соединения UART
+        # создаем Buttons для начала и окончания соединения
         self.Start_Button = ttk.Button(self.f, text = '     Start\nConnection', state = '!disabled', command = self.Start_Button_Pressed)
         self.Start_Button.grid(pady = 12, padx = 8, row = 4, column = 0)
         
@@ -51,7 +51,7 @@ class RawIP_Connect:
         self.Stop_Button.grid(pady = 12, padx = 8, row = 4, column = 1)
 
     def send_data(self, led_data):
-        # метод отправки данные по последовательному порту
+        # метод отправки данных
         if led_data.rb_var.get() == 0:
             payload = bytes([255, led_data.red_val_1, led_data.green_val_1, led_data.blue_val_1])
             self.RawIPSocket.sendall(self.dist_addr + self.src_addr + self.frame_size + payload + bytes(97))
